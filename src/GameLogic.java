@@ -8,18 +8,29 @@ public class GameLogic {
 
     GameLogic(Field field) {
         this.field = field;
-        pcChoice();
     }
+
+
+
+    public void description() {
+        System.out.println();
+        System.out.println("       Добро пожаловать в игру Камень, Ножницы, Бумага! ");
+        System.out.println();
+        System.out.println("            ====MENU====");
+        System.out.println();
+    }
+
+
 
     private void pcChoice() {
         field.setPcChoice((int)((Math.random()*3)+1));
     }
 
-    public void gameChoice(Field f) {
+    public void gameChoice(Field f) throws IOException {
 
         int switchChoice;
         switchChoice = field.getHumanChoice();
-
+        pcChoice();
 
 
         if(field.getPcChoice() == 1)
@@ -66,9 +77,55 @@ public class GameLogic {
         switch (field.getHumanChoice()) {
             case 1 -> System.out.println("Победитель: ВЫ");
             case 2 -> System.out.println("Победитель: ПК");
-            case 3 -> System.out.println("НИЧЬЯ");
+            case 3 -> {
+                System.out.println("НИЧЬЯ");
+                start();
+                gameChoice(field);
+            }
         }
     }
+
+    public void menuChoice() throws IOException {
+        do {
+            System.out.println("(1) : Ознакомиться с правилами игры");
+            System.out.println("(2) : Приступить к игре");
+            field.setHumanChoice(GameLogic.getInt());
+        } while (field.getHumanChoice() < 1 || field.getHumanChoice() > 2);
+    }
+
+
+
+    public void launch() throws IOException {
+        if(field.getHumanChoice() == 1)
+        {
+            System.out.println();
+            System.out.println("""
+                    Победитель определяется по правилам:
+                    — камень побеждает ножницы (камень затупляет ножницы)
+                    — ножницы побеждают бумагу (ножницы разрезают бумагу)
+                    — бумага побеждает камень (бумага заворачивает камень)
+                    — ничья, если у всех игроков одновременно показан одинаковый знак
+
+                    Играют до тех пор, пока не останется один игрок. Он и будет победителем.""");
+            System.out.println();
+            start();
+            gameChoice(field);
+        }
+        else if(field.getHumanChoice() == 2)
+        {
+            start();
+            gameChoice(field);
+        }
+    }
+
+    public void start() throws IOException {
+        do {
+            System.out.println("Для выбора, введите цифру: 1 - (Камень), 2 - (Ножницы), 3 - (Бумага)");
+            field.setHumanChoice(GameLogic.getInt());
+        } while(field.getHumanChoice() < 1 || field.getHumanChoice() > 3);
+    }
+
+
 
     public static Integer getInt() throws IOException {
         return Integer.parseInt(getString());
@@ -78,5 +135,9 @@ public class GameLogic {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         return br.readLine();
     }
+
+
+
+
 
 }
