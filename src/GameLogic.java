@@ -6,7 +6,7 @@ public class GameLogic {
 
     private Field field;
 
-    GameLogic(Field field) throws IOException {
+    GameLogic(Field field) {
         this.field = field;
         pcChoice();
     }
@@ -15,7 +15,7 @@ public class GameLogic {
         field.setPcChoice((int)((Math.random()*3)+1));
     }
 
-    public void gameChoice(Field f) throws IOException {
+    public void gameChoice(Field f) {
 
         int switchChoice;
         switchChoice = field.getHumanChoice();
@@ -64,18 +64,19 @@ public class GameLogic {
 
 
         switch (field.getHumanChoice()) {
-            case 1:
-                System.out.println("Победитель: ВЫ");
-                break;
-            case 2:
-                System.out.println("Победитель: ПК");
-                break;
-            case 3:
-                System.out.println("НИЧЬЯ");
-                break;
+            case 1 -> System.out.println("Победитель: ВЫ");
+            case 2 -> System.out.println("Победитель: ПК");
+            case 3 -> System.out.println("НИЧЬЯ");
         }
     }
 
+    public static Integer getInt() throws IOException {
+        return Integer.parseInt(getString());
+    }
 
+    public static String getString() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        return br.readLine();
+    }
 
 }
