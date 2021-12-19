@@ -1,32 +1,19 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 public class GameLogic {
 
-    private Field field;
+    private enum Figure {
 
-    GameLogic(Field field) {
-        this.field = field;
     }
 
+    private final Scanner sc = new Scanner(System.in);
 
-
-    public void description() {
-        System.out.println();
-        System.out.println("       Добро пожаловать в игру Камень, Ножницы, Бумага! ");
-        System.out.println();
-        System.out.println("            ====MENU====");
-        System.out.println();
+    public Figure getByValue(int i) {
+                                        //TODO вечером
+        return null;
     }
 
-
-
-    private void pcChoice() {
-        field.setPcChoice((int)((Math.random()*3)+1));
-    }
-
-    public void gameChoice(Field f) throws IOException {
+    private void gameChoice() {
 
         int switchChoice;
         switchChoice = field.getHumanChoice();
@@ -79,65 +66,72 @@ public class GameLogic {
             case 2 -> System.out.println("Победитель: ПК");
             case 3 -> {
                 System.out.println("НИЧЬЯ");
-                start();
-                gameChoice(field);
+                launch();
+                gameChoice();
             }
         }
     }
 
-    public void menuChoice() throws IOException {
-        do {
-            System.out.println("(1) : Ознакомиться с правилами игры");
-            System.out.println("(2) : Приступить к игре");
-            field.setHumanChoice(GameLogic.getInt());
-        } while (field.getHumanChoice() < 1 || field.getHumanChoice() > 2);
+    private Field field;
+    private static final String RULES = "\"\"\"\n" +
+            "                    Победитель определяется по правилам:\n" +
+            "                    — камень побеждает ножницы (камень затупляет ножницы)\n" +
+            "                    — ножницы побеждают бумагу (ножницы разрезают бумагу)\n" +
+            "                    — бумага побеждает камень (бумага заворачивает камень)\n" +
+            "                    — ничья, если у всех игроков одновременно показан одинаковый знак\n" +
+            "\n" +
+            "                      Играют до тех пор, пока не останется один игрок. Он и будет победителем.\"\"\"";
+    private static final String CHOICEMENU = "(1) : Ознакомиться с правилами игры\n" +
+                                   "(2) : Приступить к игре";
+    private static final String GREETINGS = "\n"+"       Добро пожаловать в игру Камень, Ножницы, Бумага!\n " +
+            "\n" +
+            "            ====MENU====";
+    private static final String CHOICE = "Для выбора, введите цифру: 1 - (Камень), 2 - (Ножницы), 3 - (Бумага)";
+
+
+
+
+    GameLogic(Field field) {
+        this.field = field;
     }
 
-
-
-    public void launch() throws IOException {
+    public void start() {
+        menuChoice();
         if(field.getHumanChoice() == 1)
         {
-            System.out.println();
-            System.out.println("""
-                    Победитель определяется по правилам:
-                    — камень побеждает ножницы (камень затупляет ножницы)
-                    — ножницы побеждают бумагу (ножницы разрезают бумагу)
-                    — бумага побеждает камень (бумага заворачивает камень)
-                    — ничья, если у всех игроков одновременно показан одинаковый знак
-
-                    Играют до тех пор, пока не останется один игрок. Он и будет победителем.""");
-            System.out.println();
-            start();
-            gameChoice(field);
+            System.out.println(RULES);
+            launch();
+            gameChoice();
         }
         else if(field.getHumanChoice() == 2)
         {
-            start();
-            gameChoice(field);
+            launch();
+            gameChoice();
         }
     }
 
-    public void start() throws IOException {
+    private void pcChoice() {
+        field.setPcChoice((int)((Math.random()*3)+1));
+    }
+
+
+
+    private void menuChoice() {
+        description();
         do {
-            System.out.println("Для выбора, введите цифру: 1 - (Камень), 2 - (Ножницы), 3 - (Бумага)");
-            field.setHumanChoice(GameLogic.getInt());
+            System.out.println(CHOICEMENU);
+            field.setHumanChoice(sc.nextInt());
+        } while (field.getHumanChoice() < 1 || field.getHumanChoice() > 2);
+    }
+
+    private void launch() {
+        do {
+            System.out.println(CHOICE);
+            field.setHumanChoice(sc.nextInt());
         } while(field.getHumanChoice() < 1 || field.getHumanChoice() > 3);
     }
 
-
-
-    public static Integer getInt() throws IOException {
-        return Integer.parseInt(getString());
+    private void description() {
+        System.out.println(GREETINGS);
     }
-
-    public static String getString() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        return br.readLine();
-    }
-
-
-
-
-
 }
