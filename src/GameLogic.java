@@ -1,70 +1,90 @@
 import java.util.Scanner;
 
 public class GameLogic {
+    enum MenuPoints { FIRSTPOINT, SECONDPOINT }
+    private static MenuPoints menuPoints;
 
-    private enum Figure {
+    private enum Figure { ROCK, PAPER, SCISSORS }
+    private static Figure figure;
 
-    }
+    private enum Winner { HUMANWON, PCWON, DRAW }
+    private static Winner winner;
 
     private final Scanner sc = new Scanner(System.in);
+    private Field field;
 
-    public Figure getByValue(int i) {
-                                        //TODO вечером
-        return null;
+    GameLogic(Field field) {
+        this.field = field;
+    }
+
+
+
+    public void start() {
+        menuChoice();
+        if(getByPoints(field.getHumanChoice()) == MenuPoints.FIRSTPOINT)
+        {
+            System.out.println(RULES);
+            launch();
+            gameChoice();
+        }
+        else if(getByPoints(field.getHumanChoice()) == MenuPoints.SECONDPOINT)
+        {
+            launch();
+            gameChoice();
+        }
+    }
+
+    private void menuChoice() {
+        description();
+        do {
+            System.out.println(CHOICEMENU);
+            field.setHumanChoice(sc.nextInt());
+
+        } while (getByPoints(field.getHumanChoice()) != MenuPoints.FIRSTPOINT &&
+                getByPoints(field.getHumanChoice()) != MenuPoints.SECONDPOINT);
+    }
+
+    private void launch() {
+        do {
+            System.out.println(CHOICE);
+            field.setHumanChoice(sc.nextInt());
+        } while(getByFigure(field.getHumanChoice()) != Figure.ROCK &&
+                getByFigure(field.getHumanChoice()) != Figure.PAPER &&
+                getByFigure(field.getHumanChoice()) != Figure.SCISSORS);
     }
 
     private void gameChoice() {
-
-        int switchChoice;
-        switchChoice = field.getHumanChoice();
         pcChoice();
 
+        if(getByFigure(field.getPcChoice()) == Figure.ROCK)
+            if(getByFigure(field.getHumanChoice()) == Figure.ROCK)
+                winner = Winner.DRAW;
+            else if(getByFigure(field.getHumanChoice()) == Figure.SCISSORS)
+                winner = Winner.PCWON;
+            else
+                winner = Winner.HUMANWON;
+        if(getByFigure(field.getPcChoice()) == Figure.SCISSORS)
+            if(getByFigure(field.getHumanChoice()) == Figure.SCISSORS)
+                winner = Winner.DRAW;
+            else if(getByFigure(field.getHumanChoice()) == Figure.PAPER)
+                winner = Winner.PCWON;
+            else
+                winner = Winner.HUMANWON;
+        if(getByFigure(field.getPcChoice()) == Figure.PAPER)
+            if(getByFigure(field.getHumanChoice()) == Figure.PAPER)
+                winner = Winner.DRAW;
+            else if(getByFigure(field.getHumanChoice()) == Figure.ROCK)
+                winner = Winner.PCWON;
+            else
+                winner = Winner.HUMANWON;
 
-        if(field.getPcChoice() == 1)
-        {
-            if(field.getHumanChoice() == 1)
-                field.setHumanChoice(3);
-            else if(field.getHumanChoice() == 2)
-                field.setHumanChoice(2);
-            else field.setHumanChoice(1);
-        }
+        System.out.println("HumanChoice: " + getByFigure(field.getHumanChoice()));
+        System.out.println("PcChoice: " + getByFigure(field.getPcChoice()));
 
-        else if(field.getPcChoice() == 2)
-        {
-            if(field.getHumanChoice() == 1)
-                field.setHumanChoice(1);
-            else if(field.getHumanChoice() == 2)
-                field.setHumanChoice(3);
-            else field.setHumanChoice(2);
-        }
-
-        else if(field.getPcChoice() == 3)
-        {
-            if(field.getHumanChoice() == 1)
-                field.setHumanChoice(2);
-            else if(field.getHumanChoice() == 2)
-                field.setHumanChoice(1);
-            else field.setHumanChoice(3);
-        }
-
-        if(switchChoice == 1)
-            System.out.println("Вы выбрали: Камень");
-        else if(switchChoice == 2)
-            System.out.println("Вы выбрали: Ножницы");
-        else if(switchChoice == 3)
-            System.out.println("Вы выбрали: Бумагу");
-        if(field.getPcChoice() == 1)
-            System.out.println("ПК выбрал: Камень");
-        else if(field.getPcChoice() == 2)
-            System.out.println("ПК выбрал: Ножницы");
-        else if(field.getPcChoice() == 3)
-            System.out.println("ПК выбрал: Бумагу");
-
-
-        switch (field.getHumanChoice()) {
-            case 1 -> System.out.println("Победитель: ВЫ");
-            case 2 -> System.out.println("Победитель: ПК");
-            case 3 -> {
+        switch (winner) {
+            case HUMANWON -> System.out.println("Победитель: ВЫ");
+            case PCWON -> System.out.println("Победитель: ПК");
+            case DRAW -> {
                 System.out.println("НИЧЬЯ");
                 launch();
                 gameChoice();
@@ -72,7 +92,30 @@ public class GameLogic {
         }
     }
 
-    private Field field;
+
+
+
+
+    public Figure getByFigure(int i) {
+        if(i == 1) figure = Figure.ROCK;
+        if(i == 2) figure = Figure.PAPER;
+        if(i == 3) figure = Figure.SCISSORS;
+        return figure;
+    }
+
+    public MenuPoints getByPoints(int i) {
+        if(i == 1) menuPoints = MenuPoints.FIRSTPOINT;
+        if(i == 2) menuPoints = MenuPoints.SECONDPOINT;
+        return menuPoints;
+    }
+
+
+
+
+
+
+
+
     private static final String RULES = "\"\"\"\n" +
             "                    Победитель определяется по правилам:\n" +
             "                    — камень побеждает ножницы (камень затупляет ножницы)\n" +
@@ -88,47 +131,8 @@ public class GameLogic {
             "            ====MENU====";
     private static final String CHOICE = "Для выбора, введите цифру: 1 - (Камень), 2 - (Ножницы), 3 - (Бумага)";
 
-
-
-
-    GameLogic(Field field) {
-        this.field = field;
-    }
-
-    public void start() {
-        menuChoice();
-        if(field.getHumanChoice() == 1)
-        {
-            System.out.println(RULES);
-            launch();
-            gameChoice();
-        }
-        else if(field.getHumanChoice() == 2)
-        {
-            launch();
-            gameChoice();
-        }
-    }
-
     private void pcChoice() {
         field.setPcChoice((int)((Math.random()*3)+1));
-    }
-
-
-
-    private void menuChoice() {
-        description();
-        do {
-            System.out.println(CHOICEMENU);
-            field.setHumanChoice(sc.nextInt());
-        } while (field.getHumanChoice() < 1 || field.getHumanChoice() > 2);
-    }
-
-    private void launch() {
-        do {
-            System.out.println(CHOICE);
-            field.setHumanChoice(sc.nextInt());
-        } while(field.getHumanChoice() < 1 || field.getHumanChoice() > 3);
     }
 
     private void description() {
